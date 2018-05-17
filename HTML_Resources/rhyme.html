@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+    body { margin: 1em; max-width: 75ch;}
+  </style>
+</head>
+<body>
+  <div class = "instructions">
+    <h2>Rhyme Provider</h2><br>
+	  This rhyme provider was written using Java and utilizes CMU's phonetic library (165,000+ words).<br><br>
+	  <input id="uInput" type="text" name="word" onkeyup="cycleLogic()"><br><br><br>
+  </div>
+  <div id="rhyme_words"></div>
+
+  <script>
+  var serverLogic;
+
+  function cycleLogic(){
+    window.clearTimeout(serverLogic);
+    serverLogic = window.setTimeout(function(){ findLogic();}, 500);
+  }
+
+  function update_rhyme_words(jWords){
+	  console.log(jWords);
+	  document.getElementById("rhyme_words").innerHTML = jWords;
+  }
+
+  function getReadyStateHandler(req, reqHandler){
+    return function(){
+      if(req.readyState == 4){
+        if(req.status ==200){
+          console.log("we're hit the step before JSON");
+          console.log(req.responseText);
+		      reqHandler(req.responseText);
+        } else {
+          alert("HTTP error: "+req.status);
+        }
+      }
+    }
+  }
+
+  function findLogic(){
+    var xhr = new XMLHttpRequest();
+	  xhr.onreadystatechange= getReadyStateHandler(xhr, update_rhyme_words);
+    var word = encodeURIComponent(document.getElementById("uInput").value);
+    var url = "/rhymeapi";
+  	xhr.open("POST", url, true);
+	  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  	xhr.send("word=" + decodeURIComponent(word));
+    console.log('xhr sent');
+  }
+
+  </script>
+</body>
