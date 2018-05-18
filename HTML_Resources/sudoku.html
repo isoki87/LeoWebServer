@@ -1,33 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script>
-  </script>
+  <meta charset "UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+    body { margin: 1em; max-width: 75ch;}
+  </style>
 </head>
 <body>
-  information
-</body>function update_rhyme_words(jWords){
-	  document.getElementById("rhyme_words").innerHTML = jWords;
+  <div class = "instructions">
+    <h2>Sudoku</h2>
+	  Play Sudoku! Enter the numbers 1-9 on the squares, each row, column, and 3x3 grid should all have unique numbers.
+    <br><br>
+  </div>
+  <div class = "game">
+    <div class = "control_panel">
+      Difficulty Level:<br>
+      <input type="text" id="diff" value="easy, medium, or hard"><br>
+      <button type="button" id="start">Generate Puzzle!</button>
+      <button type="button" id="check">How am I doing?</button><br><br>
+    </div>
+    <div id = "board" class = "game_board">
+      Put grid here
+    </div>
+  </div>
+
+  <script>
+  var boardArr;
+  document.getElementById("start").addEventListener("click", getBoard());
+  document.getElementById("check").addEventListener("click", checkAnswer());
+
+  function checkAnswer(){
+
+  }
+
+
+  function update_board(board){
+
   }
 
   function getReadyStateHandler(req, reqHandler){
     return function(){
-      if(req.readyState == 4){
-        if(req.status ==200){
-		      reqHandler(req.responseText);
-        } else {
-          alert("HTTP error: "+req.status);
-        }
+      if(req.readyState == 4 && req.status == 200){
+		    reqHandler(JSON.parse(req.responseText));
+      } else {
+        alert("HTTP error: "+req.status);
       }
     }
   }
 
-  function findLogic(){
+  function getBoard(){
     var xhr = new XMLHttpRequest();
-	  xhr.onreadystatechange= getReadyStateHandler(xhr, update_rhyme_words);
-    var word = encodeURIComponent(document.getElementById("uInput").value);
-    var url = "/rhymeapi";
+	  xhr.onreadystatechange= getReadyStateHandler(xhr, update_board);
+    var diff = encodeURIComponent(document.getElementById("diff").value);
+    var url = "/sudokuapi";
   	xhr.open("POST", url, true);
 	  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  	xhr.send("word=" + word);
+  	xhr.send("difficulty=" + diff);
   }
+
+  </script>
+</body>
