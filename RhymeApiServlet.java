@@ -1,27 +1,31 @@
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.leo.RhymeProvider;
+
+
 @SuppressWarnings("serial")
 public class RhymeApiServlet extends HttpServlet {
 	
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		System.out.println("POST is called");
-		System.out.println(req.getParameter("word"));
-		String word = req.getParameter("word");
-		String result = "";
+		String word = URLDecoder.decode(req.getParameter("word"), "UTF-8");
+		ArrayList<String> list = new ArrayList<>();
 		if ((word != null) && (word.length() != 0)) {
-			StringConverter sc = new StringConverter();
-			result = sc.convertStr(word);
+			RhymeProvider rp = new RhymeProvider("WordBank.txt");
+			rp.initialize();
+			list = rp.findRhyme(word);
 		}
-		System.out.println(result);
 		resp.setContentType("text/plain");
 		resp.setCharacterEncoding("UTF-8");
-		resp.getWriter().println(result);
+		for(int i = 0; i < list.size(); i++) {
+			resp.getWriter().println(list.get(i) + "<br>");
+		}
 	}
-
 }
