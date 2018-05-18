@@ -6,4 +6,28 @@
 </head>
 <body>
   information
-</body>
+</body>function update_rhyme_words(jWords){
+	  document.getElementById("rhyme_words").innerHTML = jWords;
+  }
+
+  function getReadyStateHandler(req, reqHandler){
+    return function(){
+      if(req.readyState == 4){
+        if(req.status ==200){
+		      reqHandler(req.responseText);
+        } else {
+          alert("HTTP error: "+req.status);
+        }
+      }
+    }
+  }
+
+  function findLogic(){
+    var xhr = new XMLHttpRequest();
+	  xhr.onreadystatechange= getReadyStateHandler(xhr, update_rhyme_words);
+    var word = encodeURIComponent(document.getElementById("uInput").value);
+    var url = "/rhymeapi";
+  	xhr.open("POST", url, true);
+	  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  	xhr.send("word=" + word);
+  }
