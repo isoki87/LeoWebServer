@@ -16,48 +16,93 @@
   <div class = "game">
     <div class = "control_panel">
       Difficulty Level:<br>
-      <input type="text" id="diff" value="easy, medium, or hard"><br>
-      <button type="button" id="start">Generate Puzzle!</button>
-      <button type="button" id="check">How am I doing?</button><br><br>
+      <!--<input type="text" id="diff" value="easy, medium, or hard"><br>-->
+      <button type="button" id="start" onclick="getBoard()">Generate Puzzle!</button>
+      <button type="button" id="check" onclick="checkAnswer()">How am I doing?</button><br><br>
     </div>
-    <div id = "board" class = "game_board">
-      Put grid here
-    </div>
+    <div id = "answer" class = "answer_box"></div>
+    <table id = "board" cellspacing = "0" cellpadding = "0" class = "game_board"></div>
+
   </div>
+
 
   <script>
   var boardArr;
-  document.getElementById("start").addEventListener("click", getBoard());
-  document.getElementById("check").addEventListener("click", checkAnswer());
+
+  document.onload = createGrid(document.getElementById("board"));
+  document.onload = getBoard();
 
   function checkAnswer(){
-
+    var cellNum = 0;
+    for(var i = 0; i < 9; i++){
+      for(var j = 0; j < 9; j++){
+        var UniqueID = String(i) + String(j);
+        if(document.getElementById(uniqueID).value == boardArr[cellNum]){
+          continue;
+        } else {
+          document.getElementById("answer").innerHTML = "You got it wrong!<br><br>";
+        }
+      }
+    }
+    document.getElementById("answer").innerHTML = "You got it right!<br><br>";
   }
 
-
-  function update_board(board){
-
+  function createGrid(grid){
+    for(var i = 0; i < 9; i++){
+      var tr = document.createElement("tr");
+      for(var j = 0; j < 9; j++){
+        var td = document.createElement("td");
+        var uniqueID = String(i) + String(j);
+        var cell = document.createElement("input");
+        cell.value = "";
+        cell.setAttribute("id", uniqueID);
+        cell.setAttribute("class", "cellInput");
+        td.setAttribute("class", "sudCell");
+        td.appendChild(cell);
+        tr.appendChild(td);
+      }
+      grid.appendChild(tr);
+    }
   }
 
-  function getReadyStateHandler(req, reqHandler){
-    return function(){
-      if(req.readyState == 4 && req.status == 200){
-		    reqHandler(JSON.parse(req.responseText));
-      } else {
-        alert("HTTP error: "+req.status);
+  function populateBoard(arr){
+    var squares = 40;
+    var total = 81;
+    var cellNum = 0;
+    for(var i = 0; i < 9; i++){
+      for(var j = 0; j < 9; j++){
+        var uniqueID = String(i) + String(j);
+        if((squares / total) > Math.random()){
+          document.getElementById(uniqueID).value = arr[cellNum];
+        }
+        cellNum++;
       }
     }
   }
 
+  function prepareBoard(arr){
+    populateBoard(arr);
+    document.getElementById("answer").innerHTML = "";
+  }
+
   function getBoard(){
     var xhr = new XMLHttpRequest();
-	  xhr.onreadystatechange= getReadyStateHandler(xhr, update_board);
-    var diff = encodeURIComponent(document.getElementById("diff").value);
     var url = "/sudokuapi";
-  	xhr.open("POST", url, true);
-	  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  	xhr.send("difficulty=" + diff);
+  	xhr.open("GET", url, true);
+	  xhr.onload = function(){
+      boardArr = xhr.responseText;
+      prepareBoard(boardArr);
+    }
+  	xhr.send(null);
   }
+//40 numbers, 33 numbers, 28 numbers
+//private boolean isBlank(int blanks, int spaces){
+//        double prob = ((double)(blanks)) / ((double)(spaces));
+//        if(prob >= Math.random()){
+  //          return true;
+    //    }
+    //    return false;
+    //}
 
   </script>
 </body>
