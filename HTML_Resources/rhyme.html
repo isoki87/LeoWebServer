@@ -13,14 +13,16 @@
 	  This rhyme provider was written using Java and utilizes CMU's phonetic library (165,000+ words).<br><br>
 	  <input id="uInput" type="text" name="word" onkeyup="cycleLogic()"><br><br><br>
   </div>
-  <div id="rhyme_words"></div>
-
+  <div id="rhyme_words"></div><br>
+  <div class="back">
+    <a href ='/home'>Back</a>
+  </div>
   <script>
   var serverLogic;
 
   function cycleLogic(){
     window.clearTimeout(serverLogic);
-    serverLogic = window.setTimeout(function(){ findLogic();}, 500);
+    serverLogic = window.setTimeout(function(){ findLogic();}, 100);
   }
 
   function update_rhyme_words(jWords){
