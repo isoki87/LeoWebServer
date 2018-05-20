@@ -15,14 +15,15 @@
   </div>
   <div class = "game">
     <div class = "control_panel">
-      Difficulty Level:<br>
-      <!--<input type="text" id="diff" value="easy, medium, or hard"><br>-->
-      <button type="button" id="start" onclick="getBoard()">Generate Puzzle!</button>
-      <button type="button" id="check" onclick="checkAnswer()">How am I doing?</button><br><br>
+      <button type="button" id="generate" onclick="getBoard()">Generate Puzzle</button>
+      <button type="button" id="show" onclick="showBoard()">Show Answer</button>
+      <button type="button" id="check" onclick="checkAnswer()">Check Answer</button><br><br>
     </div>
     <div id = "answer" class = "answer_box"></div>
-    <table id = "board" cellspacing = "0" cellpadding = "0" class = "game_board"></div>
-
+    <table id = "board" cellspacing = "0" cellpadding = "0" class = "game_board"></table><br>
+  </div>
+  <div class="back">
+    <a href ='/home'>Back</a>
   </div>
 
 
@@ -36,15 +37,67 @@
     var cellNum = 0;
     for(var i = 0; i < 9; i++){
       for(var j = 0; j < 9; j++){
-        var UniqueID = String(i) + String(j);
+        var uniqueID = String(i) + String(j);
+        console.log(uniqueID);
+        console.log(document.getElementById(uniqueID).value);
+        console.log(boardArr[cellNum]);
         if(document.getElementById(uniqueID).value == boardArr[cellNum]){
+          cellNum++;
           continue;
         } else {
           document.getElementById("answer").innerHTML = "You got it wrong!<br><br>";
+          return;
         }
       }
     }
     document.getElementById("answer").innerHTML = "You got it right!<br><br>";
+  }
+
+  function showBoard(){
+    populateBoard(boardArr, 0);
+  }
+
+  function populateBoard(arr, blanks){
+    var total = 81;
+    var squares = total - blanks;
+    var cellNum = 0;
+    for(var i = 0; i < 9; i++){
+      for(var j = 0; j < 9; j++){
+        var uniqueID = String(i) + String(j);
+        if((squares / total) > Math.random()){
+          document.getElementById(uniqueID).value = arr[cellNum];
+          squares--;
+        }
+        total--;
+        cellNum++;
+      }
+    }
+  }
+
+  function prepareBoard(arr){
+    populateBoard(arr, 40);
+    document.getElementById("answer").innerHTML = "";
+  }
+
+  function getBoard(){
+    clearBoard();
+    var xhr = new XMLHttpRequest();
+    var url = "/sudokuapi";
+  	xhr.open("GET", url, true);
+	  xhr.onload = function(){
+      boardArr = xhr.responseText;
+      prepareBoard(boardArr);
+    }
+  	xhr.send(null);
+  }
+
+  function clearBoard(){
+    for(var i = 0; i < 9; i++){
+      for(var j = 0; j < 9; j++){
+        var uniqueID = String(i) + String(j);
+        document.getElementById(uniqueID).value = "";
+      }
+    }
   }
 
   function createGrid(grid){
@@ -57,6 +110,7 @@
         cell.value = "";
         cell.setAttribute("id", uniqueID);
         cell.setAttribute("class", "cellInput");
+        cell.setAttribute("size", 1);
         td.setAttribute("class", "sudCell");
         td.appendChild(cell);
         tr.appendChild(td);
@@ -64,45 +118,6 @@
       grid.appendChild(tr);
     }
   }
-
-  function populateBoard(arr){
-    var squares = 40;
-    var total = 81;
-    var cellNum = 0;
-    for(var i = 0; i < 9; i++){
-      for(var j = 0; j < 9; j++){
-        var uniqueID = String(i) + String(j);
-        if((squares / total) > Math.random()){
-          document.getElementById(uniqueID).value = arr[cellNum];
-        }
-        cellNum++;
-      }
-    }
-  }
-
-  function prepareBoard(arr){
-    populateBoard(arr);
-    document.getElementById("answer").innerHTML = "";
-  }
-
-  function getBoard(){
-    var xhr = new XMLHttpRequest();
-    var url = "/sudokuapi";
-  	xhr.open("GET", url, true);
-	  xhr.onload = function(){
-      boardArr = xhr.responseText;
-      prepareBoard(boardArr);
-    }
-  	xhr.send(null);
-  }
-//40 numbers, 33 numbers, 28 numbers
-//private boolean isBlank(int blanks, int spaces){
-//        double prob = ((double)(blanks)) / ((double)(spaces));
-//        if(prob >= Math.random()){
-  //          return true;
-    //    }
-    //    return false;
-    //}
 
   </script>
 </body>
