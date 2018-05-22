@@ -6,6 +6,7 @@
   <style>
     body { margin: 1em; max-width: 75ch;}
   </style>
+  <title>Rhyme Provider</title>
 </head>
 <body>
   <div class = "instructions">
@@ -15,7 +16,7 @@
   </div>
   <div id="rhyme_words"></div><br>
   <div class="back">
-    <a href ='/home'>Back</a>
+    <a href ='/index.html'>Back</a>
   </div>
   <script>
   var serverLogic;
@@ -26,7 +27,6 @@
   }
 
   function update_rhyme_words(jWords){
-	  console.log(jWords);
 	  document.getElementById("rhyme_words").innerHTML = jWords;
   }
 
@@ -34,9 +34,7 @@
     return function(){
       if(req.readyState == 4){
         if(req.status ==200){
-          console.log("we're hit the step before JSON");
-          console.log(req.responseText);
-		      reqHandler(req.responseText);
+		  reqHandler(req.responseText);
         } else {
           alert("HTTP error: "+req.status);
         }
@@ -46,13 +44,12 @@
 
   function findLogic(){
     var xhr = new XMLHttpRequest();
-	  xhr.onreadystatechange= getReadyStateHandler(xhr, update_rhyme_words);
+	xhr.onreadystatechange= getReadyStateHandler(xhr, update_rhyme_words);
     var word = encodeURIComponent(document.getElementById("uInput").value);
     var url = "/rhymeapi";
   	xhr.open("POST", url, true);
-	  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   	xhr.send("word=" + decodeURIComponent(word));
-    console.log('xhr sent');
   }
 
   </script>
