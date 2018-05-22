@@ -1,56 +1,119 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset "UTF-8">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <style>
     body { margin: 1em; max-width: 75ch;}
   </style>
-  <title>Rhyme Provider</title>
+  <title>Sudoku</title>
 </head>
 <body>
   <div class = "instructions">
-    <h2>Rhyme Provider</h2><br>
-	  This rhyme provider was written using Java and utilizes CMU's phonetic library (165,000+ words).<br><br>
-	  <input id="uInput" type="text" name="word" onkeyup="cycleLogic()"><br><br><br>
+    <h2>Sudoku</h2>
+	  Play Sudoku! Enter the numbers 1-9 on the squares, each row, column, and 3x3 grid should all have unique numbers.
+    <br><br>
   </div>
-  <div id="rhyme_words"></div><br>
+  <div class = "game">
+    <div class = "control_panel">
+      <button type="button" id="generate" onclick="getBoard()">Generate Puzzle</button>
+      <button type="button" id="show" onclick="showBoard()">Show Answer</button>
+      <button type="button" id="check" onclick="checkAnswer()">Check Answer</button><br><br>
+    </div>
+    <div id = "answer" class = "answer_box"></div>
+    <table id = "board" cellspacing = "0" cellpadding = "0" class = "game_board"></table><br>
+  </div>
   <div class="back">
     <a href ='/index.html'>Back</a>
   </div>
+
   <script>
-  var serverLogic;
+  var boardArr;
 
-  function cycleLogic(){
-    window.clearTimeout(serverLogic);
-    serverLogic = window.setTimeout(function(){ findLogic();}, 100);
-  }
+  document.onload = createGrid(document.getElementById("board"));
+  document.onload = getBoard();
 
-  function update_rhyme_words(jWords){
-	  document.getElementById("rhyme_words").innerHTML = jWords;
-  }
-
-  function getReadyStateHandler(req, reqHandler){
-    return function(){
-      if(req.readyState == 4){
-        if(req.status ==200){
-		  reqHandler(req.responseText);
+  function checkAnswer(){
+    var cellNum = 0;
+    for(var i = 0; i < 9; i++){
+      for(var j = 0; j < 9; j++){
+        var uniqueID = String(i) + String(j);
+        if(document.getElementById(uniqueID).value == boardArr[cellNum]){
+          cellNum++;
+          continue;
         } else {
-          alert("HTTP error: "+req.status);
+          document.getElementById("answer").innerHTML = "You got it wrong!<br><br>";
+          return;
         }
+      }
+    }
+    document.getElementById("answer").innerHTML = "You got it right!<br><br>";
+  }
+
+  function showBoard(){
+    populateBoard(boardArr, 0);
+  }
+
+  function populateBoard(arr, blanks){
+    var total = 81;
+    var squares = total - blanks;
+    var cellNum = 0;
+    for(var i = 0; i < 9; i++){
+      for(var j = 0; j < 9; j++){
+        var uniqueID = String(i) + String(j);
+        if((squares / total) > Math.random()){
+          document.getElementById(uniqueID).value = arr[cellNum];
+          squares--;
+        }
+        total--;
+        cellNum++;
       }
     }
   }
 
-  function findLogic(){
-    var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange= getReadyStateHandler(xhr, update_rhyme_words);
-    var word = encodeURIComponent(document.getElementById("uInput").value);
-    var url = "/rhymeapi";
-  	xhr.open("POST", url, true);
-	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  	xhr.send("word=" + decodeURIComponent(word));
+  function prepareBoard(arr){
+    populateBoard(arr, 40);
+    document.getElementById("answer").innerHTML = "";
   }
 
+  function getBoard(){
+    clearBoard();
+    var xhr = new XMLHttpRequest();
+    var url = "/sudokuapi";
+  	xhr.open("GET", url, true);
+	xhr.onload = function(){
+      boardArr = xhr.responseText;
+      prepareBoard(boardArr);
+    }
+  	xhr.send(null);
+  }
+
+  function clearBoard(){
+    for(var i = 0; i < 9; i++){
+      for(var j = 0; j < 9; j++){
+        var uniqueID = String(i) + String(j);
+        document.getElementById(uniqueID).value = "";
+      }
+    }
+  }
+
+  function createGrid(grid){
+    for(var i = 0; i < 9; i++){
+      var tr = document.createElement("tr");
+      for(var j = 0; j < 9; j++){
+        var td = document.createElement("td");
+        var uniqueID = String(i) + String(j);
+        var cell = document.createElement("input");
+        cell.value = "";
+        cell.setAttribute("id", uniqueID);
+        cell.setAttribute("class", "cellInput");
+        cell.setAttribute("size", 1);
+        td.setAttribute("class", "sudCell");
+        td.appendChild(cell);
+        tr.appendChild(td);
+      }
+      grid.appendChild(tr);
+    }
+  }
   </script>
 </body>
