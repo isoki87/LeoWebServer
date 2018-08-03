@@ -19,10 +19,8 @@
   	Enter an image URL in the box to see all the labels of the image!
   	<br><br>
   	<input type="text" placeholder="Enter Image URL Here" id="userInput">
-  	<button onclick="testJSON()">Test JSON</button>
-  	<!--
   	<button onclick="processInput()" name="url">Show Labels</button>
-  	<button onclick="showSample()">See Sample</button>  -->
+  	<button onclick="showSample()">See Sample</button>
   	<!-- I want to have a onmouseover function for the two buttons that will show a thumbnail preview of the html picture -->
   </div><br>
   <div id = "api"></div><br>
@@ -31,12 +29,6 @@
     <a href ='/index.html'>Back</a>
   </div>
   <script>
-  	function testJSON(){
-  		var rawRequest = {"requests": [{"image": { "source": {"imageUri": "https://images.pexels.com/photos/20787/pexels-photo.jpg"}},"features": [{"type": "LABEL_DETECTION"}]}]};
-		var jsonToSend = JSON.stringify(rawRequest);
-		console.log(jsonToSend);
-  	}
-  <!--
   	var APIKey;
   	$.get('/CloudVisionAPI/CloudVisionAPIKey.txt', function(data){
   		APIKey = data;
@@ -51,10 +43,9 @@
   		}
   	}
   	
-  	function showSample(){
+    function showSample(){
   		showLabels();
-  	}
-  	
+  	}	
   	
   	function isImage(url){
   		url = String(url).split('?')[0];
@@ -78,9 +69,8 @@
   	    }
   	  }
   	}
-  	-->
-<!--Escaping the HTML &'s in JSON may be hard, need to bleach it-->
-  	<!--
+  	
+    <!--Escaping the HTML &'s in JSON may be hard, need to bleach it-->
   	function showLabels(){
   		var xhr = new XMLHttpRequest();
   		xhr.onreadystatechange= getReadyStateHandler(xhr, updateLabels);
@@ -95,20 +85,17 @@
   	
   	function updateLabels(jAnnotatedImage){
   		var response = JSON.parse(jAnnotatedImage);
-  		var size = response[0][0].length;
-  		console.log(size);
+  		var size = response.responses[0].labelAnnotations.length;
   		var labelContent = "";
   		for(var i = 0; i < size; i++){
-  			console.log(response[0][0][i].description);
-  			labelContent += response[0][0][i].description + "<br>";
+  			labelContent += response.responses[0].labelAnnotations[i].description + "<br>";
   		}
   		document.getElementById("labels").innerHTML = labelContent;
   	}
-  	-->
   </script>
 </body>
 </html>
-
+<!-- newJson.responses[0].labelAnnotations[i].description is the proper parsing instruction -->
 <!-- valid JSON request from the google API explorer
  {
   "requests": [
@@ -126,3 +113,73 @@
     }
   ]
 } -->
+<!-- valid JSON response from the google API
+{
+  "responses": [
+    {
+      "labelAnnotations": [
+        {
+          "mid": "/m/0bt9lr",
+          "description": "dog",
+          "score": 0.8920206,
+          "topicality": 0.8920206
+        },
+        {
+          "mid": "/m/01z5f",
+          "description": "dog like mammal",
+          "score": 0.88694125,
+          "topicality": 0.88694125
+        },
+        {
+          "mid": "/m/08t9c_",
+          "description": "grass",
+          "score": 0.8723395,
+          "topicality": 0.8723395
+        },
+        {
+          "mid": "/m/0kpmf",
+          "description": "dog breed",
+          "score": 0.8698735,
+          "topicality": 0.8698735
+        },
+        {
+          "mid": "/m/01c7cq",
+          "description": "grassland",
+          "score": 0.72486985,
+          "topicality": 0.72486985
+        },
+        {
+          "mid": "/m/025st_8",
+          "description": "meadow",
+          "score": 0.65382636,
+          "topicality": 0.65382636
+        },
+        {
+          "mid": "/m/05mqq3",
+          "description": "snout",
+          "score": 0.64834446,
+          "topicality": 0.64834446
+        },
+        {
+          "mid": "/m/02wbgd",
+          "description": "english cocker spaniel",
+          "score": 0.6269687,
+          "topicality": 0.6269687
+        },
+        {
+          "mid": "/m/02kysw",
+          "description": "spaniel",
+          "score": 0.62650746,
+          "topicality": 0.62650746
+        },
+        {
+          "mid": "/m/01gd91",
+          "description": "pasture",
+          "score": 0.6250899,
+          "topicality": 0.6250899
+        }
+      ]
+    }
+  ]
+}
+ -->
