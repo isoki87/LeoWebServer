@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+    body { margin: 1em; max-width: 75ch;}
+  </style>
+  <title>Image Label Recognition</title>
+</head>
+<body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <div class = 'Introduction'>
+  	<h2>Image Label Recognition</h2>
+  	<font size = 1>Powered by Google Cloud Vision API</font>
+  </div>
+  <br>
+  <div class = "instructions">
+  	Enter an image URL in the box to see all the labels of the image!
+  	<br><br>
+  	<input type="text" placeholder="Enter Image URL Here" id="userInput">
+  	<button onclick="testJSON()">Test JSON</button>
+  	<!--
+  	<button onclick="processInput()" name="url">Show Labels</button>
+  	<button onclick="showSample()">See Sample</button>  -->
+  	<!-- I want to have a onmouseover function for the two buttons that will show a thumbnail preview of the html picture -->
+  </div><br>
+  <div id = "api"></div><br>
+  <div id = "labels"></div><br>
+  <div class="back">
+    <a href ='/index.html'>Back</a>
+  </div>
+  <script>
+  	function testJSON(){
+  		var rawRequest = {"requests": [{"image": { "source": {"imageUri": "https://images.pexels.com/photos/20787/pexels-photo.jpg"}},"features": [{"type": "LABEL_DETECTION"}]}]};
+		var jsonToSend = JSON.stringify(rawRequest);
+		console.log(jsonToSend);
+  	}
+  <!--
+  	var APIKey;
+  	$.get('/CloudVisionAPI/CloudVisionAPIKey.txt', function(data){
+  		APIKey = data;
+  	}, 'text');
+  	
+  	function processInput(){
+  		var input = document.getElementById("userInput").value;
+  		if(isImage(input)){
+  			showLabels();
+  		} else {
+  			document.getElementById("labels").innerHTML = "Sorry, please make sure the URL ends in .jpeg/.jpg/.gif/.png";
+  		}
+  	}
+  	
+  	function showSample(){
+  		showLabels();
+  	}
+  	
+  	
+  	function isImage(url){
+  		url = String(url).split('?')[0];
+  		var parts = url.split('.');
+  		var extension = parts[parts.length - 1];
+  		var imageTypes = ['jpg', 'jpeg', 'tiff', 'png', 'gif', 'bmp'];
+  		if(imageTypes.indexOf(extension) != -1){
+  			return true;
+  		}
+  		return false;
+  	}
+  	
+  	function getReadyStateHandler(req, reqHandler){
+  	  return function(){
+  	 	if(req.readyState == 4){
+  	      if(req.status ==200){
+  		    reqHandler(req.responseText);
+  	      } else {
+  	        alert("HTTP error: "+ req.status);
+  	      }
+  	    }
+  	  }
+  	}
+  	-->
+<!--Escaping the HTML &'s in JSON may be hard, need to bleach it-->
+  	<!--
+  	function showLabels(){
+  		var xhr = new XMLHttpRequest();
+  		xhr.onreadystatechange= getReadyStateHandler(xhr, updateLabels);
+  	    var url = "https://vision.googleapis.com/v1/images:annotate";
+  	    url = url + "?key=" + APIKey;
+  	  	xhr.open("POST", url, true);
+  		var rawRequest = {"requests": [{"image": { "source": {"imageUri": "https://images.pexels.com/photos/20787/pexels-photo.jpg"}},"features": [{"type": "LABEL_DETECTION"}]}]};
+		var jsonToSend = JSON.stringify(rawRequest);
+  		xhr.setRequestHeader("Content-Type", "application/json");
+  	  	xhr.send(jsonToSend);
+  	}
+  	
+  	function updateLabels(jAnnotatedImage){
+  		var response = JSON.parse(jAnnotatedImage);
+  		var size = response[0][0].length;
+  		console.log(size);
+  		var labelContent = "";
+  		for(var i = 0; i < size; i++){
+  			console.log(response[0][0][i].description);
+  			labelContent += response[0][0][i].description + "<br>";
+  		}
+  		document.getElementById("labels").innerHTML = labelContent;
+  	}
+  	-->
+  </script>
+</body>
+</html>
+
+<!-- valid JSON request from the google API explorer
+ {
+  "requests": [
+    {
+      "image": {
+        "source": {
+          "imageUri": "https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
+        }
+      },
+      "features": [
+        {
+          "type": "LABEL_DETECTION"
+        }
+      ]
+    }
+  ]
+} -->
