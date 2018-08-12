@@ -19,20 +19,33 @@
   	Enter an image URL in the box to see all the labels of the image!
   	<br><br>
   	<input type="text" placeholder="Enter Image URL Here" id="userInput">
-  	<button onclick="processInput()" name="url">Show Labels</button>
-  	<button onclick="showSample()">See Sample</button>
-  	<!-- I want to have a onmouseover function for the two buttons that will show a thumbnail preview of the html picture -->
+  	<button onclick="test()" name="test">TEST</button>
+  	<!-- <button onclick="processInput()" name="url">Show Labels</button>
+  	<button onclick="showSample()">See Sample</button>-->
+  	<!-- A onmouseover function for the two buttons that will show a thumbnail preview of the html picture -->
   </div><br>
   <div id = "labels"></div><br>
   <div class="back">
     <a href ='/index.html'>Back</a>
   </div>
   <script>
-  	var APIKey;
-  	$.get('/CloudVisionAPI/CloudVisionAPIKey.txt', function(data){
-  		APIKey = data;
-  	}, 'text');
-  	
+    function test(){
+    	var xhr = new XMLHttpRequest();
+  	    var url = "/testapi";
+  	  	xhr.open("GET", url, true);
+  	  	xhr.onload = function(){
+  	  	  updateLabel(xhr.responseText);
+  	  	}
+  	  	xhr.send(null);
+    }
+    
+    function updateLabel(newLabel){
+    	document.getElementById("labels").innerHTML = newLabel;
+    }
+    
+    
+  /*
+  LOOK UP JQUERY FOR AJAX
   	function processInput(){
   		var input = document.getElementById("userInput").value;
   		if(isImage(input)){
@@ -90,7 +103,7 @@
   			labelContent += response.responses[0].labelAnnotations[i].description + "<br>";
   		}
   		document.getElementById("labels").innerHTML = labelContent;
-  	}
+  	}*/
   </script>
 </body>
 </html>
