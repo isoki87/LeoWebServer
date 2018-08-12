@@ -42,7 +42,7 @@ public class TestApiServelet extends HttpServlet {
 	}
 	
 	private String getAPIKey() throws IOException, FileNotFoundException {
-		String keyPath = "HIDING THIS PATH";
+		String keyPath = "../resources/CloudVisionAPI/CloudVisionAPIKey.txt";
 		FileReader fr = new FileReader(keyPath);
 		BufferedReader r = new BufferedReader(fr);
 		String APIKey = r.readLine();		
