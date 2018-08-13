@@ -22,10 +22,10 @@ public class RhymeApiServlet extends HttpServlet {
   
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String word = URLDecoder.decode(request.getParameter("word"), "UTF-8");
-	    System.out.println(new File(".").getAbsoluteFile());
+	  //System.out.println(new File(".").getAbsoluteFile());
 		ArrayList<String> list = new ArrayList<>();
 		if ((word != null) && (word.length() != 0)) {
-			RhymeProvider rp = new RhymeProvider("../webapps/ROOT/RhymeBank/WordBank.txt");
+			RhymeProvider rp = new RhymeProvider("../resources/RhymeBank/WordBank.txt");
 			rp.initialize();
 			list = rp.findRhyme(word);
 		}
